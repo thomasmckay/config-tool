@@ -1,6 +1,9 @@
 package hostsettings
 
 import "github.com/quay/config-tool/pkg/lib/shared"
+import (
+       "net"
+)
 
 // Validate checks the configuration settings for this field group
 func (fg *HostSettingsFieldGroup) Validate(opts shared.Options) []shared.ValidationError {
@@ -33,7 +36,14 @@ func (fg *HostSettingsFieldGroup) Validate(opts shared.Options) []shared.Validat
 		}
 
 		// Validate cert pair and hostname
-		if ok, err := shared.ValidateCertPairWithHostname(opts.Certificates["ssl.cert"], opts.Certificates["ssl.key"], fg.ServerHostname, "HostSettigns"); !ok {
+
+		h, _, _ := net.SplitHostPort(fg.ServerHostname)
+        //if err != nil {
+		//	errors = append(errors, err)
+		//	return errors
+        //}
+
+		if ok, err := shared.ValidateCertPairWithHostname(opts.Certificates["ssl.cert"], opts.Certificates["ssl.key"], h, "HostSettings"); !ok {
 			errors = append(errors, err)
 			return errors
 		}
